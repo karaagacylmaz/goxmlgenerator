@@ -1,0 +1,20 @@
+ <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+   <url>
+     <loc>https://...</loc>
+     <lastmod>2020-01-10T14:57:48.2528342Z</lastmod>
+     <changefreq>daily</changefreq>
+     <image:image></image:image>
+   </url>
+   <url>
+     <loc>https://...</loc>
+     <lastmod>2020-01-10T14:57:48.2528342Z</lastmod>
+     <changefreq>daily</changefreq>
+     <image:image>
+       <image:loc>25531e10-47e3-4135-b36c-d8dcf9f08be5.jpg</image:loc>
+       <image:loc>592348e9-ec31-4ac7-af06-355148312982.jpg</image:loc>
+       <image:loc>7fdca615-8109-4dde-9d63-9ce0d5a2e00d.jpg</image:loc>
+       <image:loc>fda37c0e-6d77-4f83-960e-376559d5af4d.jpg</image:loc>
+       <image:loc>fe315523-b9c6-4fd8-8982-2b6048977c20.jpg</image:loc>
+     </image:image>
+   </url>
+ </urlset>
