@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"path/filepath"
 	"time"
 
 	"encoding/xml"
@@ -19,6 +20,7 @@ var (
 	user     string
 	database string
 	password string
+	storage  string
 )
 
 type (
@@ -34,7 +36,7 @@ type (
 		Loc        string    `xml:"loc"`
 		Lastmod    time.Time `xml:"lastmod"`
 		Changefreq string    `xml:"changefreq"`
-		MyImages   Image
+		MyImages   *Image
 	}
 
 	Image struct {
@@ -56,9 +58,15 @@ func init() {
 	user = os.Getenv("DB_USER")
 	password = os.Getenv("DB_PASSWORD")
 	database = os.Getenv("DB_NAME")
+	if s := os.Getenv("DATA_PATH"); s != "" {
+		storage = s
+	} else {
+		storage = "./"
+	}
 }
 
 func main() {
+	start := time.Now()
 	db := pg.Connect(&pg.Options{
 		User:     user,
 		Password: password,
@@ -79,18 +87,25 @@ func main() {
 	for index, _ := range ls {
 		slug, _ := url.Parse(ls[index].Slug)
 		images := ls[index].ImageUrls
-		//, MyImages: Image{Loc: images}
 		changeFreq := ls[index].ChangeType
-		v.Urls = append(v.Urls, Url{Loc: slug.String(), Lastmod: time.Now().UTC(), Changefreq: changeFreq, MyImages: Image{Loc: images}})
+		u := Url{
+			Loc: slug.String(), Lastmod: time.Now().UTC(), Changefreq: changeFreq,
+		}
+		if len(images) != 0 {
+			u.MyImages = &Image{Loc: images}
+		}
+		v.Urls = append(v.Urls, u)
 	}
 
-	filename := "sitemap.xml"
-	file, _ := os.Create(filename)
+	file, _ := os.Create(filepath.FromSlash(storage) + "/sitemap.xml")
+	defer file.Close()
 
 	xmlWriter := io.Writer(file)
 	enc := xml.NewEncoder(xmlWriter)
 	enc.Indent(" ", "  ")
 	if err := enc.Encode(v); err != nil {
-		fmt.Printf("error: %v\n", err)
+		panic(err)
 	}
+
+	defer fmt.Printf("%s ready!\nElapsed %s\n", "Sitemap", time.Since(start))
 }
